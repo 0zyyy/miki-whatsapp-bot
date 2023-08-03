@@ -34,7 +34,6 @@ import type * as Types from "./utils/typings/types";
 		onStart?.(LOCALDB, command.listOfCommands);
 	}
 	console.log(command.listOfCommands.length, "commands loaded.");
-
 	// my lib: https://npmjs.com/promptees
 	const promptees = new Promptees<MessageContext, "timeout">({
 		// Sets the default command wait time to 15 minutes.
@@ -162,7 +161,7 @@ import type * as Types from "./utils/typings/types";
 				const context = new MessageContext(m);
 				const user_id = context.userId().out;
 				const chat_id = context.chatId().out;
-
+				
 				// check if either user or chat is listed in banned list, and return immediately if do exists
 				if (LOCALDB.system.banneds?.some((id: string) => id === user_id || id === chat_id)) return;
 
@@ -195,6 +194,7 @@ import type * as Types from "./utils/typings/types";
 				const isGroupChat = context.isGroupChat().out;
 				const isPrompting = promptees.isPrompting(id);
 				const isPremiumUser = context.isPremiumUser().out;
+				const isVirtex = context.chatSize().out > 1500;
 				const TEXTS = basicTexts[language];
 				let _isGroupChatAdmin: boolean | null = null;
 				const isGroupChatAdmin = async () => _isGroupChatAdmin ?? (_isGroupChatAdmin = await context.isGroupChatAdmin().out);
@@ -220,7 +220,8 @@ import type * as Types from "./utils/typings/types";
 						onMessage?.(context, bot);
 					}
 				}
-
+				
+				if(isVirtex) return context.reply({ text: "Hayo" });
 				// if the bot is waiting for a response from the user, return it
 				if (isPrompting) return promptees.returnPrompt(id, context);
 
@@ -296,7 +297,7 @@ import type * as Types from "./utils/typings/types";
 						user_data.stats.hits[cmdName] ??= 0;
 						user_data.stats.hits[cmdName] += 1;
 						if (theCommand.metadata.premium) user_data.lastPremCmd = now;
-						return context.react("✅");
+						return context.readMessage().out;
 					} catch (e) {
 						console.error(e);
 						context.react("❌").reply({ text: TEXTS.ERROR() });

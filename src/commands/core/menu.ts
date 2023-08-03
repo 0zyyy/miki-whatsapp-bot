@@ -46,9 +46,9 @@ command.new({
 				const premium = metadata.premium;
 				for (const [idx, name] of Object.entries(names)) {
 					if (idx === "0") {
-						str += "\n" + (hits[name] ? "┊" : "┃") + ` */${name}*` + (otherName ? ` » ${otherName}` : "") + (premium ? " $" : "");
+						str += "\n" + (hits[name] ? "┊" : "┃") + ` *.${name}*` + (otherName ? ` » ${otherName}` : "") + (premium ? " $" : "");
 					} else {
-						str += "\n" + (hits[name] ? "┊" : "┃") + ` /${name}`;
+						str += "\n" + (hits[name] ? "┊" : "┃") + ` .${name}`;
 					}
 				}
 			}

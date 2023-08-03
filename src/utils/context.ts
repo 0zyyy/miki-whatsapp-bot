@@ -485,6 +485,31 @@ export function createMessageContext(LOCALDB: Types.LOCALDB, bot: ReturnType<typ
 			this._out = (this.userData().out.premiumUntil || 0) > Date.now();
 			return this as unknown as Context<boolean>;
 		}
+		/**
+		 * Returns a size of the chat to avoid virtex.
+		 * 
+		 * ```js
+		 * ctx.chatSize().out;
+		 * ```
+		 */
+		chatSize() {
+			this._out = (async () => {
+				this.text.length;
+			})
+			return this as unknown as Context<number>;
+		}
+
+		/**
+		 * Read this message from message id
+		 * 
+		 * ```js
+		 * ctx.readMessage().out;
+		 * ```
+		 */
+		readMessage() {
+			this._out = bot.readMessages([this.update.key!]);
+			return this as unknown as Context<Promise<void>>;
+		}
 	};
 }
 export type MessageContext = ReturnType<typeof createMessageContext>["prototype"];

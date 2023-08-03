@@ -21,8 +21,8 @@ command.new({
 		const lang = context.language().out;
 		const [dur, num] = await requestArguments(context, {
 			arguments: [
-				["Duration", (x) => !isNaN(+x), { onWrong: "Duration is not a number." }],
-				["Number", (x) => LOCALDB[x.replace(/\D+g/, "") + wnet]?.type === "user", { onWrong: "User not found." }],
+				["Durasi", (x) => !isNaN(+x), { onWrong: "Duration is not a number." }],
+				["Nomor", (x) => LOCALDB[x.replace(/\D+g/, "") + wnet]?.type === "user", { onWrong: "User not found." }],
 			],
 		});
 		if (dur === null) return;

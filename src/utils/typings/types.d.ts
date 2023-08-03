@@ -1,5 +1,6 @@
 import type * as Baileys from "@whiskeysockets/baileys";
 import type { MessageContext, GroupParticipantsUpdateContext } from "..";
+import { ResponseType } from "axios";
 
 export type LOCALDB = { [key: string]: GROUPDB | USERDB | SYSTEMDB };
 
@@ -124,4 +125,37 @@ export type commandConfigurations = {
 			};
 		};
 	};
+};
+
+export type requestConfigurations = {
+	/**
+	 * The URL to request.
+	 */
+	url: string;
+	/**
+	 * The method to use.
+	 * 	
+	 * Options:
+	 * - `"GET"` - Get data from the server.
+	 * - `"POST"` - Send data to the server. 
+	 */
+	method: "GET" | "POST";
+	/**
+	 * The data to send to the server.
+	 * 	
+	 */
+	data?: any;
+};
+
+export type requestResponse = {
+	/**
+	 * The response from the server.
+	 * 
+	 * If the response is JSON, it will be parsed into an object.
+	 * If the response is not JSON, it will be parsed into a string.
+	 */
+	data: any;
+	
+	
+	status: ResponseType;
 };
