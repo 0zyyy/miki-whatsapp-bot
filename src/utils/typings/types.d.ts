@@ -25,6 +25,9 @@ export type USERDB = {
 		};
 		lastHit?: number;
 	};
+	isAfk?: boolean,
+	afkText?: string,
+	afkTime?: number,
 	[key: string]: any;
 };
 
@@ -134,28 +137,16 @@ export type requestConfigurations = {
 	url: string;
 	/**
 	 * The method to use.
-	 * 	
+	 *
 	 * Options:
 	 * - `"GET"` - Get data from the server.
-	 * - `"POST"` - Send data to the server. 
+	 * - `"POST"` - Send data to the server.
 	 */
 	method: "GET" | "POST";
 	/**
 	 * The data to send to the server.
-	 * 	
+	 *
 	 */
 	data?: any;
 };
 
-export type requestResponse = {
-	/**
-	 * The response from the server.
-	 * 
-	 * If the response is JSON, it will be parsed into an object.
-	 * If the response is not JSON, it will be parsed into a string.
-	 */
-	data: any;
-	
-	
-	status: ResponseType;
-};
