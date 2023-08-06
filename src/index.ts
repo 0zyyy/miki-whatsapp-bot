@@ -7,6 +7,16 @@ import makeWASocket, * as Baileys from '@whiskeysockets/baileys';
 import { MessageContext, createMessageContext, createGroupParticipantsUpdateContext } from "./utils";
 
 import type * as Types from "./utils/typings/types";
+function secondsToHms(d: number) {
+    d = Number(d);
+    var h = Math.floor(d / 3600);
+    var m = Math.floor(d % 3600 / 60);
+    var s = Math.floor(d % 3600 % 60);
+    var hDisplay = h > 0 ? h + (h == 1 ? " JAM": "") : "";
+    var mDisplay = m > 0 ? m + (m == 1 ? " MENIT": "") : "";
+    var sDisplay = s > 0 ? s + (s == 1 ? " DETIK": "") : "";
+    return hDisplay + mDisplay + sDisplay; 
+}
 
 (async () => {
 	// create a file to store data
@@ -195,12 +205,12 @@ import type * as Types from "./utils/typings/types";
 				const isPrompting = promptees.isPrompting(id);
 				const isPremiumUser = context.isPremiumUser().out;
 				const isVirtex = context.chatSize().out > 1500;
+				const isAfk = user_data.isAfk;
 				const TEXTS = basicTexts[language];
 				let _isGroupChatAdmin: boolean | null = null;
 				const isGroupChatAdmin = async () => _isGroupChatAdmin ?? (_isGroupChatAdmin = await context.isGroupChatAdmin().out);
 
 				user_data.stats.lastSeen = now;
-
 				console.log(
 					[
 						">",
@@ -221,9 +231,22 @@ import type * as Types from "./utils/typings/types";
 					}
 				}
 				
+				//Check for Virtex
 				if(isVirtex) return context.reply({ text: "Hayo" });
 				// if the bot is waiting for a response from the user, return it
 				if (isPrompting) return promptees.returnPrompt(id, context);
+
+				// Check for afk
+				if(isAfk && isGroupChat){
+					const now = Date.now();
+					const selisihAfk = now - user_data.afkTime!;
+					(LOCALDB[user_id] as Types.USERDB).isAfk = false;
+					(LOCALDB[user_id] as Types.USERDB).afkText = "";
+					(LOCALDB[user_id] as Types.USERDB).afkTime = 0;
+					context.reply({
+						text: `KAMU TELAH KEMBALI DARI AFK SELAMA ${selisihAfk.toLocaleString()}`
+					})
+				}
 
 				// if the user sends a command
 				if (cmdName) {
@@ -293,22 +316,23 @@ import type * as Types from "./utils/typings/types";
 					}
 					// finally run the command
 					try {
+						context.readMessage();
 						await theCommand.onCommand(context, bot);
 						user_data.stats.hits[cmdName] ??= 0;
 						user_data.stats.hits[cmdName] += 1;
 						if (theCommand.metadata.premium) user_data.lastPremCmd = now;
-						return context.readMessage().out;
+						return context.react("✅").out;
 					} catch (e) {
 						console.error(e);
 						context.react("❌").reply({ text: TEXTS.ERROR() });
-						const dest = process.env.ERROR_REPORT_NUMBER || process.env.OWNER_NUMBER;
-						bot.sendMessage(
-							dest?.endsWith("@g.us") ? dest : dest + "@s.whatsapp.net",
-							{
-								text: `Error at *${cmdName}*:\n\t${(e as Error)?.stack || e}`,
-							},
-							{ quoted: context.update, ephemeralExpiration: 86400 }
-						);
+						// const dest = process.env.ERROR_REPORT_NUMBER || process.env.OWNER_NUMBER;
+						// bot.sendMessage(
+						// 	dest?.endsWith("@g.us") ? dest : dest + "@s.whatsapp.net",
+						// 	{
+						// 		text: `Error at *${cmdName}*:\n\t${(e as Error)?.stack || e}`,
+						// 	},
+						// 	{ quoted: context.update, ephemeralExpiration: 86400 }
+						// );
 					}
 				}
 			} catch (error) {
@@ -328,6 +352,9 @@ import type * as Types from "./utils/typings/types";
 				}
 			}
 		});
+
+		bot.ev.on("call",async (update) => {
+		})
 	})();
 })().catch((e) => {
 	console.error(e);

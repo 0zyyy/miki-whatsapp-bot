@@ -6,6 +6,6 @@
 		"outDir": "./js/",
 		"rootDir": "./src/",
 		"strict": true,
-		"esModuleInterop": true
-	}
+		"esModuleInterop": true,
+	},
 }

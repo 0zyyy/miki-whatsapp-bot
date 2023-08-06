@@ -1,6 +1,7 @@
 {
 	"main": "js/index.js",
 	"scripts": {
+		"dev": "tsc -w",
 		"build": "tsc",
 		"start": "node js/index",
 		"apply-backup": "node js/apply-backup"
@@ -12,6 +13,7 @@
 		"kao.moji": "^0.1.3",
 		"link-preview-js": "^2.1.13",
 		"lodash": "^4.17.21",
+		"nodemon": "^3.0.1",
 		"promptees": "^2.0.0",
 		"qrcode-terminal": "^0.12.0"
 	},

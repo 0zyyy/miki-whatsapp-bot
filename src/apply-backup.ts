@@ -2,7 +2,6 @@ import "dotenv/config";
 import makeWASocket, * as Baileys from "@whiskeysockets/baileys";
 import { createMessageContext } from "./utils";
 import Promptees from "promptees";
-import axios from "axios";
 import * as fs from "fs";
 
 import type * as Types from "./utils/typings/types";

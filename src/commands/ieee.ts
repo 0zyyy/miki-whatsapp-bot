@@ -9,28 +9,29 @@ command.new({
         const [title] = await requestArguments(context,{
             separator: "|",
             arguments: [
-                ["title", (x) => x.length > 0, { onWrong: "Judul tidak boleh kosong" }],
+                ["title", (x) => x.length > 0, { onMissing: "Silahkan ketikkan .ieee *judul jurnal*" }],
             ],
         })
 
         if(title === null) return;
 
         bot.sendMessage(chatId, { text: "TUNGGU SEBENTAR..." });
-
         try{
-            const allJournal = await get("http://127.0.0.1:5000/ieee/" + title);
-    
-            console.log(allJournal);
-    
-            context.reply({
-                text: "Selesai"
+            await get("http://146.190.41.221:5000/ieee/" + title).then(async (res) => {
+                let str: string = res.length > 0 ? "DATA BERHASIL DITEMUKAN\n\n" : "DATA TIDAK DITEMUKAN\n\n";
+                for(let i = 0; i < res.length; i++){
+                    str += `*${i+1}.*\n*Judul*: ${res[i].publication_title}\n`;
+                    str += `*Abstrak*: ${res[i].abstract}\n`;
+                    str += `*Link Sci-Hub*: ${res[i].sci_hub}\n`
+                    str += `*Tanggal publikasi*: ${res[i].publication_date}\n\n`;
+                }
+                await bot.sendMessage(chatId, { text: str });
             });
-            
+            return;
         }catch(e){
-            context.reply({
+            return context.reply({
                 text: "Terjadi kesalahan"
             })
-            return;
         }
     },
     metadata: {
