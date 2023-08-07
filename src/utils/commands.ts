@@ -36,6 +36,7 @@ export const basicTexts = {
 			`Kamu hanya dapat menggunakan perintah Premium sekali sehari. Berlangganan Premium sekarang untuk mendapatkan akses tanpa batas. Ketik */premium* untuk selengkapnya.\n\nTunggu ${time} lagi untuk menggunakan perintah Premium.`,
 		ERROR: () =>
 			"Terjadi kesalahan pada sistem Miki. Mohon maaf atas ketidaknyamanannya. Silahkan coba beberapa saat lagi atau laporkan dengan perintah */feedback*.",
+		MAINTENANCE: () => "Command sedang dalam perbaikan. Mohon maaf atas ketidaknyamanannya. Silahkan coba beberapa saat lagi.",
 	},
 	en: {
 		CMD_NOT_FOUND: () =>
@@ -57,5 +58,6 @@ export const basicTexts = {
 		PREMIUM_LIMIT: (time: string) =>
 			`You can only use Premium commands once per day. Subscribe to Premium for unlimited access.\n\nWait for ${time} to use Premium commands.`,
 		ERROR: () => "There was an error in Miki's system. Sorry for the inconvenience. Please try again at a later time or report it using the */feedback* command.",
+		MAINTENANCE: () => "Command is under maintenance. Sorry for the inconvenience. Please try again at a later time."
 	},
 };

@@ -97,6 +97,10 @@ export type commandConfigurations = {
 		 */
 		category: "mediatools" | "othertools" | "games" | "randomfun" | "grouptools" | "botsettings" | "owner";
 		/**
+		 * Command maintenance status.
+		 */
+		maintenance?: true | undefined;
+		/**
 		 * Command description.
 		 */
 		locale: {

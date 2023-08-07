@@ -3,19 +3,19 @@ import path from "path";
 import * as fs from "fs";
 import Promptees from "promptees";
 import * as fsp from "fs/promises";
-import makeWASocket, * as Baileys from '@whiskeysockets/baileys';
+import makeWASocket, * as Baileys from "@whiskeysockets/baileys";
 import { MessageContext, createMessageContext, createGroupParticipantsUpdateContext } from "./utils";
 
 import type * as Types from "./utils/typings/types";
 function secondsToHms(d: number) {
-    d = Number(d);
-    var h = Math.floor(d / 3600);
-    var m = Math.floor(d % 3600 / 60);
-    var s = Math.floor(d % 3600 % 60);
-    var hDisplay = h > 0 ? h + (h == 1 ? " JAM": "") : "";
-    var mDisplay = m > 0 ? m + (m == 1 ? " MENIT": "") : "";
-    var sDisplay = s > 0 ? s + (s == 1 ? " DETIK": "") : "";
-    return hDisplay + mDisplay + sDisplay; 
+	d = Number(d);
+	var h = Math.floor(d / 3600);
+	var m = Math.floor((d % 3600) / 60);
+	var s = Math.floor((d % 3600) % 60);
+	var hDisplay = h > 0 ? h + (h == 1 ? " JAM" : "") : "";
+	var mDisplay = m > 0 ? m + (m == 1 ? " MENIT" : "") : "";
+	var sDisplay = s > 0 ? s + (s == 1 ? " DETIK" : "") : "";
+	return hDisplay + mDisplay + sDisplay;
 }
 
 (async () => {
@@ -78,21 +78,21 @@ function secondsToHms(d: number) {
 			auth: state,
 			getMessage: async (key) => (key.id ? messageStore[key.id] : undefined),
 			patchMessageBeforeSending: (message) => {
-                if (message.buttonsMessage || message.templateMessage || message.listMessage) {
-                    message = {
-                        viewOnceMessage: {
-                            message: {
-                                messageContextInfo: {
-                                    deviceListMetadataVersion: 2,
-                                    deviceListMetadata: {},
-                                },
-                                ...message,
-                            },
-                        },
-                    };
-                }
+				if (message.buttonsMessage || message.templateMessage || message.listMessage) {
+					message = {
+						viewOnceMessage: {
+							message: {
+								messageContextInfo: {
+									deviceListMetadataVersion: 2,
+									deviceListMetadata: {},
+								},
+								...message,
+							},
+						},
+					};
+				}
 				return message;
-            },
+			},
 		});
 
 		// overwrite sendMessage so it can save and push messages
@@ -171,7 +171,7 @@ function secondsToHms(d: number) {
 				const context = new MessageContext(m);
 				const user_id = context.userId().out;
 				const chat_id = context.chatId().out;
-				
+
 				// check if either user or chat is listed in banned list, and return immediately if do exists
 				if (LOCALDB.system.banneds?.some((id: string) => id === user_id || id === chat_id)) return;
 
@@ -230,22 +230,22 @@ function secondsToHms(d: number) {
 						onMessage?.(context, bot);
 					}
 				}
-				
+
 				//Check for Virtex
-				if(isVirtex) return context.reply({ text: "Hayo" });
+				if (isVirtex) return context.reply({ text: "Hayo" });
 				// if the bot is waiting for a response from the user, return it
 				if (isPrompting) return promptees.returnPrompt(id, context);
 
 				// Check for afk
-				if(isAfk && isGroupChat){
+				if (isAfk && isGroupChat) {
 					const now = Date.now();
 					const selisihAfk = now - user_data.afkTime!;
 					(LOCALDB[user_id] as Types.USERDB).isAfk = false;
 					(LOCALDB[user_id] as Types.USERDB).afkText = "";
 					(LOCALDB[user_id] as Types.USERDB).afkTime = 0;
 					context.reply({
-						text: `KAMU TELAH KEMBALI DARI AFK SELAMA ${selisihAfk.toLocaleString()}`
-					})
+						text: `KAMU TELAH KEMBALI DARI AFK SELAMA ${selisihAfk.toLocaleString()}`,
+					});
 				}
 
 				// if the user sends a command
@@ -272,6 +272,14 @@ function secondsToHms(d: number) {
 						}
 					}
 					user_data.stats.lastHit = now;
+
+					// check is the command is under maintenance or not
+					if (theCommand.metadata.maintenance) {
+						if(!isBotOwner){
+							return context.react("🔧").reply({ text: TEXTS.MAINTENANCE() });
+						}
+					}
+
 					// permission
 					switch (theCommand.metadata.permission) {
 						case "all":
@@ -299,14 +307,13 @@ function secondsToHms(d: number) {
 							break;
 						case "private-admin":
 							if (isGroupChat && !(await isGroupChatAdmin())) return context.react("❌").reply({ text: TEXTS.NOT_PRIVATE_ADMIN() });
+							break;
 					}
 					// limit premium command to a non-premium user for once every 24h
 					const lastPremCmdDiff = now - (user_data.lastPremCmd || 0);
 					if (theCommand.metadata.premium && !isPremiumUser && lastPremCmdDiff < 86_400_000) {
 						const time = (a: number, b: number) => Math.floor((now - lastPremCmdDiff) / a) % b;
-						return context
-							.react("💲")
-							.reply({ text: TEXTS.PREMIUM_LIMIT(`${time(3_600_000, 1)}:${time(60_000, 60)}:${time(1_000, 60)}`) });
+						return context.react("💲").reply({ text: TEXTS.PREMIUM_LIMIT(`${time(3_600_000, 1)}:${time(60_000, 60)}:${time(1_000, 60)}`) });
 					}
 					// send description if first time
 					if (!user_data.stats.hits[cmdName]) {
@@ -353,8 +360,9 @@ function secondsToHms(d: number) {
 			}
 		});
 
-		bot.ev.on("call",async (update) => {
-		})
+		// call handler
+		bot.ev.on("call", async (update) => {
+		});
 	})();
 })().catch((e) => {
 	console.error(e);
